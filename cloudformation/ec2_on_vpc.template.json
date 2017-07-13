@@ -1,0 +1,505 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Provisioning Wordpress server on VPC",
+  "Parameters": {
+    "InstanceType": {
+      "AllowedValues": [
+        "t2.micro",
+        "t2.small",
+        "t2.medium",
+        "t2.large",
+        "m4.large",
+        "m4.xlarge",
+        "m4.2xlarge",
+        "m4.4xlarge",
+        "m4.10xlarge",
+        "m3.medium",
+        "m3.large",
+        "m3.xlarge",
+        "m3.2xlarge",
+        "c4.large",
+        "c4.xlarge",
+        "c4.2xlarge",
+        "c4.4xlarge",
+        "c4.8xlarge",
+        "c3.large",
+        "c3.xlarge",
+        "c3.2xlarge",
+        "c3.4xlarge",
+        "c3.8xlarge",
+        "r3.large",
+        "r3.xlarge",
+        "r3.2xlarge",
+        "r3.4xlarge",
+        "r3.8xlarge",
+        "i2.xlarge",
+        "i2.2xlarge",
+        "i2.4xlarge",
+        "i2.8xlarge",
+        "d2.xlarge",
+        "d2.2xlarge",
+        "d2.4xlarge",
+        "d2.8xlarge"
+      ],
+      "Default": "t2.micro",
+      "Description": "Instance type",
+      "Type": "String"
+    },
+    "InstanceAMI": {
+      "Default": "ami-3bd3c45c",
+      "Description": "AMI ID",
+      "Type": "AWS::EC2::Image::Id"
+    },
+    "KeyName": {
+      "Description": "EC2 Instance key pair name.",
+      "Type": "AWS::EC2::KeyPair::KeyName"
+    },
+    "PupilName": {
+      "Default": "yatsushiro",
+      "Description": "Pupil's name(e.g. yatsushiro)",
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "Vpc": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.8.0.0/16",
+        "InstanceTenancy": "default",
+        "EnableDnsSupport": "true",
+        "EnableDnsHostnames": "true",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Fn::Join": [
+                "-",
+                [
+                  "wordpress",
+                  "vpc",
+                  {
+                    "Ref": "PupilName"
+                  }
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "SubnetA": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.8.1.0/24",
+        "AvailabilityZone": "ap-northeast-1a",
+        "VpcId": {
+          "Ref": "Vpc"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Fn::Join": [
+                "-",
+                [
+                  "wordpress",
+                  "subnet",
+                  "a",
+                  {
+                    "Ref": "PupilName"
+                  }
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "InternetGateway": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Fn::Join": [
+                "-",
+                [
+                  "wordpress",
+                  "igw",
+                  {
+                    "Ref": "PupilName"
+                  }
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "VpcDhcpOpt": {
+      "Type": "AWS::EC2::DHCPOptions",
+      "Properties": {
+        "DomainName": "ap-northeast-1compute.internal",
+        "DomainNameServers": [
+          "AmazonProvidedDNS"
+        ]
+      }
+    },
+    "RouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "Vpc"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Fn::Join": [
+                "-",
+                [
+                  "wordpress",
+                  "public",
+                  "route",
+                  {
+                    "Ref": "PupilName"
+                  }
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "EipAzA": {
+      "Type": "AWS::EC2::EIP",
+      "DependsOn": [
+        "Gateway"
+      ],
+      "Properties": {
+        "Domain": "vpc"
+      }
+    },
+    "InstanceAzA": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "DisableApiTermination": "false",
+        "InstanceInitiatedShutdownBehavior": "stop",
+        "IamInstanceProfile": {
+          "Ref": "InstanceProfile"
+        },
+        "ImageId": {
+          "Ref": "InstanceAMI"
+        },
+        "InstanceType": {
+          "Ref": "InstanceType"
+        },
+        "KeyName": {
+          "Ref": "KeyName"
+        },
+        "Monitoring": "false",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Fn::Join": [
+                "-",
+                [
+                  "wordpress",
+                  "server",
+                  "AzA",
+                  {
+                    "Ref": "PupilName"
+                  }
+                ]
+              ]
+            }
+          },
+          {
+            "Key": "CmBillingGroup",
+            "Value": "infra"
+          },
+          {
+            "Key": "scheduler:ec2-startstop",
+            "Value": "0700;2000;jst;weekdays"
+          },
+          {
+            "Key": "wordpress",
+            "Value": {
+              "Ref": "PupilName"
+            }
+          }
+        ],
+        "NetworkInterfaces": [
+          {
+            "DeleteOnTermination": "true",
+            "Description": "Primary network interface",
+            "DeviceIndex": 0,
+            "SubnetId": {
+              "Ref": "SubnetA"
+            },
+            "GroupSet": [
+              {
+                "Ref": "EC2SecurityGroup"
+              }
+            ]
+          }
+        ],
+        "BlockDeviceMappings": [
+          {
+            "DeviceName": "/dev/sdf",
+            "Ebs": {
+              "VolumeType": "gp2",
+              "DeleteOnTermination": "false",
+              "VolumeSize": "50"
+            }
+          }
+        ]
+      }
+    },
+    "InstanceProfile": {
+      "Properties": {
+        "Path": "/",
+        "Roles": [
+          {
+            "Ref": "InstanceRole"
+          }
+        ]
+      },
+      "Type": "AWS::IAM::InstanceProfile"
+    },
+    "InstanceRole": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sts:AssumeRole"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ec2.amazonaws.com"
+                ]
+              }
+            }
+          ]
+        },
+        "Path": "/",
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+        ]
+      },
+      "Type": "AWS::IAM::Role"
+    },
+    "EC2SecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": {
+          "Fn::Join": [
+            "-",
+            [
+              "wordpress",
+              "ec2sg",
+              {
+                "Ref": "PupilName"
+              }
+            ]
+          ]
+        },
+        "VpcId": {
+          "Ref": "Vpc"
+        }
+      }
+    },
+    "ELBSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": {
+          "Fn::Join": [
+            "-",
+            [
+              "wordpress",
+              "elbsg",
+              {
+                "Ref": "PupilName"
+              }
+            ]
+          ]
+        },
+        "VpcId": {
+          "Ref": "Vpc"
+        }
+      }
+    },
+    "Gateway": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "Vpc"
+        },
+        "InternetGatewayId": {
+          "Ref": "InternetGateway"
+        }
+      }
+    },
+    "SubnetRouteAzA": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "RouteTable"
+        },
+        "SubnetId": {
+          "Ref": "SubnetA"
+        }
+      }
+    },
+    "Route": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "RouteTableId": {
+          "Ref": "RouteTable"
+        },
+        "GatewayId": {
+          "Ref": "InternetGateway"
+        }
+      },
+      "DependsOn": "Gateway"
+    },
+    "DHCPAssoc": {
+      "Type": "AWS::EC2::VPCDHCPOptionsAssociation",
+      "Properties": {
+        "VpcId": {
+          "Ref": "Vpc"
+        },
+        "DhcpOptionsId": {
+          "Ref": "VpcDhcpOpt"
+        }
+      }
+    },
+    "AssocEipAzA": {
+      "Type": "AWS::EC2::EIPAssociation",
+      "Properties": {
+        "AllocationId": {
+          "Fn::GetAtt": [
+            "EipAzA",
+            "AllocationId"
+          ]
+        },
+        "InstanceId": {
+          "Ref": "InstanceAzA"
+        }
+      }
+    },
+    "IngressForEC2SSh": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "EC2SecurityGroup"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": "22",
+        "ToPort": "22",
+        "CidrIp": "210.251.87.242/32"
+      }
+    },
+    "InressForEC2": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "EC2SecurityGroup"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": "80",
+        "ToPort": "80",
+        "SourceSecurityGroupId": {
+          "Ref": "ELBSecurityGroup"
+        }
+      }
+    },
+    "IngressForELBSTNS": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "ELBSecurityGroup"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": "80",
+        "ToPort": "80",
+        "CidrIp": "0.0.0.0/0"
+      }
+    },
+    "IngressForELB": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "ELBSecurityGroup"
+        },
+        "IpProtocol": "-1",
+        "CidrIp": "10.0.8.0/16"
+      }
+    },
+    "ELB": {
+      "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
+      "Properties": {
+        "Subnets": [
+          {
+            "Ref": "SubnetA"
+          }
+        ],
+        "HealthCheck": {
+          "HealthyThreshold": "2",
+          "Interval": "30",
+          "Target": "TCP:80",
+          "Timeout": "5",
+          "UnhealthyThreshold": "2"
+        },
+        "ConnectionDrainingPolicy": {
+          "Enabled": "true",
+          "Timeout": "300"
+        },
+        "ConnectionSettings": {
+          "IdleTimeout": "60"
+        },
+        "CrossZone": "true",
+        "Instances": [
+          {
+            "Ref": "InstanceAzA"
+          }
+        ],
+        "SecurityGroups": [
+          {
+            "Ref": "ELBSecurityGroup"
+          }
+        ],
+        "Listeners": [
+          {
+            "InstancePort": "80",
+            "LoadBalancerPort": "80",
+            "Protocol": "TCP",
+            "InstanceProtocol": "TCP"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Fn::Join": [
+                "-",
+                [
+                  "wordpress",
+                  "elb",
+                  {
+                    "Ref": "PupilName"
+                  }
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

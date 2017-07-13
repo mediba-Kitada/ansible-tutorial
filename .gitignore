@@ -1,0 +1,29 @@
+*.retry
+
+# Dependency directories
+node_modules
+vendor
+.bundle
+
+# vim
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+
+# Backup files
+*~
+
+# OS dependent files
+.DS_Store
+Thumbs.db
+
+# Test Kitchen
+ansible/.kitchen/
+ansible/spec/*/.kitchen
+
+# TLS
+ca.pem
+server.crt
+server.key

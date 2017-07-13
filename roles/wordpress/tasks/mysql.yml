@@ -4,6 +4,14 @@
   with_items:
     - mysql-server
     - MySQL-python
+    - mysql-common
+    - mysql-devel
+    - gcc
+  tags: mysqld
+
+- name: be sure python mysqldb module installed
+  pip:
+    name: MySQL-Python
   tags: mysqld
 
 - name: be sure mysqld is running and enabled
