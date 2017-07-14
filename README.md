@@ -1,4 +1,4 @@
-kitada さんの課題
+gchtyoko さんの課題
 ====
 
 ## 1. Ansible Playbookの不具合を修正してください。
@@ -13,7 +13,7 @@ kitada さんの課題
 - Ansible Playbookの不具合を修正しないと設定画面は、表示されません。
 
 ## 修正内容をコミットし、Pull Requestしてください。
-- 作業ブランチは、`fix/kitada`としてください。
-	- `$ git checkout -b fix/kitada`
-- PR対象のブランチは、`kitada`としてください。
-	- `$ git pull-request -m 'Ansible入門 kitada' -b kitada`
+- 作業ブランチは、`fix/gchtyoko`としてください。
+	- `$ git checkout -b fix/gchtyoko`
+- PR対象のブランチは、`gchtyoko`としてください。
+	- `$ git pull-request -m 'Ansible入門 gchtyoko' -b gchtyoko`
