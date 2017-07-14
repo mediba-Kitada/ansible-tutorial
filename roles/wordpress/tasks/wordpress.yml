@@ -1,21 +1,24 @@
 ---
 - block:
 
-  - name: download wordpress package
-    get_url: url=http://ja.wordpress.org/wordpress-{{wordpress_version}}-ja.tar.gz dest=/var/tmp/
+  - name: 所定のバージョンのWordpressのパッケージがダウンロードされている
+    get_url:
+      url: "http://ja.wordpress.org/wordpress-{{ wordpress_version }}-ja.tar.gz"
+      dest: /var/tmp/
 
-  - name: extract wordpress tar ball
+  - name: Wordpressのパッケージを含むtarボールを解凍する
     shell: tar xf /var/tmp/wordpress-{{wordpress_version}}-ja.tar.gz chdir=/var/www creates=/var/www/wordpress/wp-admin/index.php
-    notify: change wordpress files owner
+    notify:
+      - change wordpress files owner
 
-  - name: generate secret keys
+  - name: Wordpress用秘密鍵を生成する
     command: curl -o /var/www/wordpress/secret-keys.php -s https://api.wordpress.org/secret-key/1.1/salt/ creates=/var/www/wordpress/secret-keys.php
 
-  - name: read secret keys
+  - name: 秘密鍵を標準出力し、変数secret_keysに代入する
     command: cat /var/www/wordpress/secret-keys.php
     register: secret_keys
 
-  - name: configure wp-config.php
+  - name: Wordpress設定が適切に編集されている
     template: src=wp-config.php.j2 dest=/var/www/wordpress/wp-config.php owner=apache group=apache mode=0400
 
   tags: wordpress
