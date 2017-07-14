@@ -1,4 +1,7 @@
 ---
-- name: be sure ntpd is running and enabled
-  service: name=ntpd state=started enabled=yes
+- name: NTPプロセス(ntpd)が自動起動している
+  service:
+    name: ntpd
+    state: started
+    enabled: yes
   tags: ntpd
