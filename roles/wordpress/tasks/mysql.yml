@@ -1,24 +1,32 @@
 ---
 - block:
-  - name: be sure mysql-server is installed
-    yum: name={{item}} state=installed
+  - name: MySQLサーバの稼働に必要なパッケージがインストールされている
+    yum: 
+      name: "{{ item }}"
+      state: installed
     with_items:
       - mysql-server
       - MySQL-python
       - mysql-devel
       - gcc
 
-  - name: be sure python mysqldb module installed
+  - name: python mysqldb moduleがインストールされている
     pip:
       name: MySQL-Python
 
-  - name: be sure mysqld is running and enabled
-    service: name=mysqld state=started enabled=yes
+  - name: mysqldプロセスが起動している
+    service: 
+      name: mysqld
+      state: started
+      enabled: yes
 
-  - name: Create database
-    mysql_db: db={{dbname}} state=present encoding=utf8
+  - name: wordpress用データベースが作成されている
+    mysql_db:
+      db: "{{dbname}}"
+      state: present
+      encoding: utf8
 
-  - name: Create database user
+  - name: wordpress用データベースに接続出来るアカウントが作成されている
     mysql_user: >
       name={{dbuser}}
       password="{{dbpassword}}"
