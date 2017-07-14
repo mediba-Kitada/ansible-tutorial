@@ -1,5 +1,5 @@
 ---
-- black:
+- block:
   - name: WEBサーバ(Apache 2.2系)がインストールされている
     yum:
       pkg: httpd
@@ -7,7 +7,7 @@
 
   - name: ドキュメントルートが作成されている
     file:
-      dest: /var/www/wordpresss
+      path: /var/www/wordpresss
       state: directory
       owner: apache
       group: apache
