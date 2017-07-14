@@ -1,4 +1,4 @@
-kitada さんの課題
+m-sugimoto さんの課題
 ====
 
 ## 1. Ansible Playbookの不具合を修正してください。
@@ -9,11 +9,11 @@ kitada さんの課題
 - プロビジョニングコマンド
 	- `$ ansible-playbook -i ./inventories/tech_lab --private-key=~/.ssh/wordpress site.yml`
 - URLは、以下の通りです。
-	- http://wordpress-serv-elb-135fppaxfezv0-1655729848.ap-northeast-1.elb.amazonaws.com/wp-admin/install.php
+	- http://wordpress-serv-ELB-KWCTCJXU4FU0-235959442.ap-northeast-1.elb.amazonaws.com/wp-admin/install.php
 - Ansible Playbookの不具合を修正しないと設定画面は、表示されません。
 
 ## 修正内容をコミットし、Pull Requestしてください。
-- 作業ブランチは、`fix/kitada`としてください。
-	- `$ git checkout -b fix/kitada`
-- PR対象のブランチは、`kitada`としてください。
-	- `$ git pull-request -m 'Ansible入門 kitada' -b kitada`
+- 作業ブランチは、`fix/m-sugimoto`としてください。
+	- `$ git checkout -b fix/m-sugimoto`
+- PR対象のブランチは、`m-sugimoto`としてください。
+	- `$ git pull-request -m 'Ansible入門 m-sugimoto' -b m-sugimoto`
