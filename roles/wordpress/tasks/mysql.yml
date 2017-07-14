@@ -22,7 +22,7 @@
 
   - name: wordpress用データベースが作成されている
     mysql_db:
-      db: "{{dbname}}"
+      db: "{{ dbname }}"
       state: present
       encoding: utf8
 
