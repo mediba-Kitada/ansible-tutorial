@@ -1,8 +1,14 @@
 ---
-- name: be sure epel repository is installed
-  yum: name=epel-release
-  tags: epel
+- block:
+  - name: EPELリポジトリがインストールされている
+    yum:
+      name: epel-release
 
-- name: disable epel repository
-  ini_file: dest=/etc/yum.repos.d/epel.repo section="epel" option="enabled" value="0"
+  - name: EPELリポジトリが無効化されている
+    ini_file:
+      dest: /etc/yum.repos.d/epel.repo
+      section: epel
+      option: enabled
+      value: 0
+
   tags: epel
