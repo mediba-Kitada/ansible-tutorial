@@ -8,6 +8,7 @@
       creates: /var/www/wordpress/wp-admin/index.php
       owner: apache
       group: apache
+      remote_src: yes
 
   - name: Wordpress用秘密鍵を生成し、変数secret_keysに代入する
     uri:
