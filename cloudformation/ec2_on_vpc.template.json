@@ -251,7 +251,7 @@
             "DeviceName": "/dev/sdf",
             "Ebs": {
               "VolumeType": "gp2",
-              "DeleteOnTermination": "false",
+              "DeleteOnTermination": "true",
               "VolumeSize": "50"
             }
           }
