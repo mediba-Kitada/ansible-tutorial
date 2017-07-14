@@ -1,4 +1,4 @@
----
+-e--
 - block:
 
   - name: Wordpressのパッケージを含むtarボールを取得し、解凍、ドキュメントルート配下に配置されている
@@ -8,7 +8,6 @@
       creates: /var/www/wordpress/wp-admin/index.php
       owner: apache
       group: apache
-      remote_src: true
 
   - name: Wordpress用秘密鍵を生成し、変数secret_keysに代入する
     uri:
