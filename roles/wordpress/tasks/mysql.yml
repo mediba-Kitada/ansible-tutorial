@@ -1,31 +1,28 @@
 ---
-- name: be sure mysql-server is installed
-  yum: name={{item}} state=installed
-  with_items:
-    - mysql-server
-    - MySQL-python
-    - mysql-common
-    - mysql-devel
-    - gcc
-  tags: mysqld
+- block:
+  - name: be sure mysql-server is installed
+    yum: name={{item}} state=installed
+    with_items:
+      - mysql-server
+      - MySQL-python
+      - mysql-devel
+      - gcc
 
-- name: be sure python mysqldb module installed
-  pip:
-    name: MySQL-Python
-  tags: mysqld
+  - name: be sure python mysqldb module installed
+    pip:
+      name: MySQL-Python
 
-- name: be sure mysqld is running and enabled
-  service: name=mysqld state=started enabled=yes
-  tags: mysqld
+  - name: be sure mysqld is running and enabled
+    service: name=mysqld state=started enabled=yes
 
-- name: Create database
-  mysql_db: db={{dbname}} state=present encoding=utf8
-  tags: mysqld
+  - name: Create database
+    mysql_db: db={{dbname}} state=present encoding=utf8
 
-- name: Create database user
-  mysql_user: >
-    name={{dbuser}}
-    password="{{dbpassword}}"
-    priv={{dbname}}.*:ALL
-    state=present
+  - name: Create database user
+    mysql_user: >
+      name={{dbuser}}
+      password="{{dbpassword}}"
+      priv={{dbname}}.*:ALL
+      state=present
+
   tags: mysqld

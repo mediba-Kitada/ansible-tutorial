@@ -1,5 +1,5 @@
 ---
-- include: httpd.yml
 - include: mysql.yml
+- include: httpd.yml
 - include: php.yml
 - include: wordpress.yml
