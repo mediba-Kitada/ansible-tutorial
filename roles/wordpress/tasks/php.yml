@@ -1,7 +1,10 @@
 ---
 - block:
-  - name: be sure php is installed
-    yum: name={{item}} state=installed enablerepo=epel
+  - name: PHP(5.3...)がインストールされている
+    yum:
+      name: "{{ item }}"
+      state: installed
+      enablerepo: epel
     with_items:
       - php
       - php-mysql
@@ -12,7 +15,7 @@
     notify:
       - restart httpd
 
-  - name: set timezone in php.ini
+  - name: php.iniにてタイムゾーンが適切に設定され、反映されている
     lineinfile: >
       dest=/etc/php.ini
       regexp='^;?date.timezone ='
