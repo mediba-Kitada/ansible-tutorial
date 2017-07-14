@@ -1,22 +1,36 @@
 ---
 - block:
-  - name: be sure httpd is installed
-    yum: pkg=httpd state=installed
+  - name: WEBサーバ(Apache 2.2系)がインストールされている
+    yum:
+      pkg: httpd
+      state: installed
 
-  - name: create document root
-    file: dest=/var/www/wordpress state=directory owner=apache group=apache mode=0755
+  - name: ドキュメントルートが作成されている
+    file:
+      dest: /var/www/wordpress
+      state: directory
+      owner: apache
+      group: apache
+      mode: 0755
 
-  - name: be sure httpd is configured
-    template: src=httpd.conf.j2 dest=/etc/httpd/conf/httpd.conf
+  - name: WEBサーバの設定ファイルが配置され、反映されている
+    template:
+      src: httpd.conf.j2
+      dest: /etc/httpd/conf/httpd.conf
     notify:
       - restart httpd
 
-  - name: remove httpd welcome.conf
-    file: path=/etc/httpd/conf.d/welcome.conf state=absent
+  - name: WEBサーバのwelcome.confが削除されている
+    file:
+      path: /etc/httpd/conf.d/welcome.conf
+      state: absent
     notify:
       - restart httpd
 
-  - name: be sure httpd is running and enabled
-    service: name=httpd state=started enabled=yes
+  - name: WEBサーバのプロセス(httpd)がブート時に自動起動している
+    service:
+      name: httpd
+      state: started
+      enabled: yes
 
   tags: httpd
