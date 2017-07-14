@@ -1,24 +1,29 @@
 ---
 - block:
 
-  - name: 所定のバージョンのWordpressのパッケージがダウンロードされている
-    get_url:
-      url: "http://ja.wordpress.org/wordpress-{{ wordpress_version }}-ja.tar.gz"
-      dest: /var/tmp/
+  - name: Wordpressのパッケージを含むtarボールを取得し、解凍、ドキュメントルート配下に配置されている
+    unarchive:
+      src: "http://ja.wordpress.org/wordpress-{{ wordpress_version }}-ja.tar.gz"
+      dest: /var/www
+      creates: /var/www/wordpress/wp-admin/index.php
+      owner: apache
+      group: apache
+      remote_src: true
 
-  - name: Wordpressのパッケージを含むtarボールを解凍する
-    shell: tar xf /var/tmp/wordpress-{{wordpress_version}}-ja.tar.gz chdir=/var/www creates=/var/www/wordpress/wp-admin/index.php
-    notify:
-      - change wordpress files owner
-
-  - name: Wordpress用秘密鍵を生成する
-    command: curl -o /var/www/wordpress/secret-keys.php -s https://api.wordpress.org/secret-key/1.1/salt/ creates=/var/www/wordpress/secret-keys.php
-
-  - name: 秘密鍵を標準出力し、変数secret_keysに代入する
-    command: cat /var/www/wordpress/secret-keys.php
+  - name: Wordpress用秘密鍵を生成し、変数secret_keysに代入する
+    uri:
+      url: "https://api.wordpress.org/secret-key/1.1/salt/"
+      return_content: yes
     register: secret_keys
+    become: yes
 
   - name: Wordpress設定が適切に編集されている
-    template: src=wp-config.php.j2 dest=/var/www/wordpress/wp-config.php owner=apache group=apache mode=0400
+    template:
+      src: wp-config.php.j2
+      dest: /var/www/wordpress/wp-config.php
+      owner: apache
+      group: apache
+      mode: 0400
+    when: secret_keys.content != ""
 
   tags: wordpress
