@@ -1,5 +1,5 @@
 ---
-- name: configure sshd_config
+- name: sshd設定が適切に編集され、反映されている
   lineinfile: >
     dest=/etc/ssh/sshd_config
     owner=root group=root mode=0600 backup=yes
