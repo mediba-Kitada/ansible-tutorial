@@ -5,7 +5,7 @@
     unarchive:
       src: "http://ja.wordpress.org/wordpress-{{ wordpress_version }}-ja.tar.gz"
       dest: /var/www
-      creates: {{ documentroot }}/wp-admin/index.php
+      creates: "{{ documentroot }}/wp-admin/index.php"
       owner: apache
       group: apache
       remote_src: yes
@@ -20,7 +20,7 @@
   - name: Wordpress設定が適切に編集されている
     template:
       src: wp-config.php.j2
-      dest: {{ documentroot }}/wp-config.php
+      dest: "{{ documentroot }}/wp-config.php"
       owner: apache
       group: apache
       mode: 0400

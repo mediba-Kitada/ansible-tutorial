@@ -22,15 +22,15 @@
 
   - name: wordpress用データベースが作成されている
     mysql_db:
-      db: "{{dbname}}"
+      db: "{{ dbname }}"
       state: present
       encoding: utf8
 
   - name: wordpress用データベースに接続出来るアカウントが作成されている
     mysql_user: >
-      name={{dbuser}}
-      password="{{dbpassword}}"
-      priv={{dbname}}.*:ALL
+      name="{{ dbuser }}"
+      password="{{ dbpassword }}"
+      priv="{{ dbname }}.*:ALL"
       state=present
 
   tags: mysqld
