@@ -19,7 +19,7 @@ KeepAliveTimeout 15
     StartServers         4
     MaxClients         300
     MinSpareThreads     25
-    MaxSpareThreads     75 
+    MaxSpareThreads     75
     ThreadsPerChild     25
     MaxRequestsPerChild  0
 </IfModule>
@@ -58,7 +58,7 @@ DocumentRoot "/var/www/wordpress"
     AllowOverride None
 </Directory>
 
-<Directory "/var/www/html">
+<Directory "/var/www/wordpress">
     Options Indexes FollowSymLinks
     AllowOverride None
     Order allow,deny
