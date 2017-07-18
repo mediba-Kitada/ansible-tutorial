@@ -1,3 +1,4 @@
 ---
 Dbname: wordpress
 dbuser: wordpress
+documentroot: /var/www/wordpress

@@ -7,7 +7,7 @@
 
   - name: ドキュメントルートが作成されている
     file:
-      dest: /var/www/wordpresss
+      dest: {{ documentroot }}
       state: directory
       owner: apache
       group: apache

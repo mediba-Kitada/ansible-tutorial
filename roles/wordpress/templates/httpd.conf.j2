@@ -52,7 +52,7 @@ ServerName {{ansible_hostname}}
 ServerAdmin root@localhost
 UseCanonicalName Off
 
-DocumentRoot "/var/www/wordpress"
+DocumentRoot {{ documentroot }}
 <Directory />
     Options FollowSymLinks
     AllowOverride None
