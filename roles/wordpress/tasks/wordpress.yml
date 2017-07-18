@@ -1,6 +1,5 @@
--e--
+---
 - block:
-
   - name: Wordpressのパッケージを含むtarボールを取得し、解凍、ドキュメントルート配下に配置されている
     unarchive:
       src: "http://ja.wordpress.org/wordpress-{{ wordpress_version }}-ja.tar.gz"
