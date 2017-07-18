@@ -9,6 +9,8 @@
       owner: apache
       group: apache
       remote_src: yes
+    notify:
+      - restart httpd
 
   - name: Wordpress用秘密鍵を生成し、変数secret_keysに代入する
     uri:
@@ -25,5 +27,7 @@
       group: apache
       mode: 0400
     when: secret_keys.content != ""
+    notify:
+      - restart httpd
 
   tags: wordpress

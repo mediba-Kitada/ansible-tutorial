@@ -16,5 +16,6 @@
     - regexp: '^GSSAPIAuthentication'
       line: 'GSSAPIAuthentication no'
       insertafter: '#GSSAPIAuthentication'
-  notify: restart sshd
+  notify:
+    - restart sshd
   tags: sshd
